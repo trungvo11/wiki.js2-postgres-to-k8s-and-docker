@@ -1,0 +1,47 @@
+version: "3"
+services:
+
+  db:
+    image: postgres:11-alpine
+    environment:
+      - POSTGRES_DB=${db}
+      - POSTGRES_PASSWORD=${password}
+      - POSTGRES_USER=${user}
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  wiki:
+    image: requarks/wiki:2
+    depends_on:
+      - db
+    environment:
+      - DB_TYPE=${type}
+      - DB_HOST=${host}
+      - DB_PORT=${port}
+      - DB_USER=${user}
+      - DB_PASS=${password}
+      - DB_NAME=${db}
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+      - "443:3443"
+  
+  wiki-update:
+    image: requarks/wiki-update-companion:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+#  adminer:
+#    container_name: wiki-adminer
+#    image: adminer:latest
+#    logging:
+#      driver: "none"
+#    ports:
+#      - "3001:8080"
+      
+volumes:
+  db-data:

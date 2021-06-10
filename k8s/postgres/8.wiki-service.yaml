@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-js2
+  namespace: wiki-js2
+  labels:
+    app: wiki
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+#    nodePort: 32322
+    protocol: TCP
+    name: http
+#  - port: 443
+#    targetPort: 3443
+#    protocol: TCP
+#    name: https
+  selector:
+    app: wiki
+
